@@ -8,7 +8,6 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer and LocalPlayer:GetMouse()
 
--- Fuentes estilo SZKHUB
 local FONT_TITLE = Enum.Font.Garamond
 local FONT_BODY  = Enum.Font.GothamMedium
 local FONT_BOLD  = Enum.Font.GothamBold
@@ -179,12 +178,20 @@ local function BuildTheme(name, accent, outline, toggle, slider, text, placehold
 	}
 end
 
--- TEMAS (SZKHUB por defecto)
-SZK.Themes.SZKHUB = BuildTheme("SZKHUB", "#FFFFFF", "#8C8C8C", "#FFFFFF", "#FFFFFF", "#F0F0F0", "#969696", "#000000", "#141414", "#FFFFFF")
-SZK.Themes.Rubi = BuildTheme("Rubi", "#FF1A1A", "#FF2A2A", "#FF1A1A", "#FF1A1A", "#F0F0F0", "#9A9A9A", "#000000", "#0A0A0A", "#FF1A1A")
-SZK.Themes.Sovereign = BuildTheme("Sovereign", "#D4AF37", "#F0D580", "#D4AF37", "#F0D580", "#FFF8E7", "#C9B98A", "#0A0805", "#15110A", "#F0D580")
+-- ═══════════════════════════════════════════════════════════════
+--                   9 TEMAS DE SZK
+-- ═══════════════════════════════════════════════════════════════
+SZK.Themes.SZKHUB    = BuildTheme("SZKHUB",    "#FFFFFF", "#8C8C8C", "#FFFFFF", "#FFFFFF", "#F0F0F0", "#969696", "#000000", "#141414", "#FFFFFF")
+SZK.Themes.Rojo      = BuildTheme("Rojo",      "#FF1A1A", "#FF2A2A", "#FF1A1A", "#FF1A1A", "#F0F0F0", "#9A9A9A", "#000000", "#0A0A0A", "#FF1A1A")
+SZK.Themes.Dorado    = BuildTheme("Dorado",    "#D4AF37", "#F0D580", "#D4AF37", "#F0D580", "#FFF8E7", "#C9B98A", "#0A0805", "#15110A", "#F0D580")
+SZK.Themes.Esmeralda = BuildTheme("Esmeralda", "#50C878", "#7FFFA0", "#50C878", "#7FFFA0", "#E7FFEE", "#8AB99A", "#000A05", "#0A1A0F", "#7FFFA0")
+SZK.Themes.Diamante  = BuildTheme("Diamante",  "#B9F2FF", "#E0FFFF", "#B9F2FF", "#E0FFFF", "#E8FCFF", "#8AB9C9", "#000A0F", "#0A1419", "#E0FFFF")
+SZK.Themes.Zafiro    = BuildTheme("Zafiro",    "#0F52BA", "#4A90E2", "#0F52BA", "#4A90E2", "#E7F0FF", "#8AA0C9", "#000510", "#0A0F1A", "#4A90E2")
+SZK.Themes.Amatista  = BuildTheme("Amatista",  "#9966CC", "#C9A0FF", "#9966CC", "#C9A0FF", "#F0E7FF", "#B09AC9", "#0A0010", "#150A1A", "#C9A0FF")
+SZK.Themes.Rubi      = BuildTheme("Rubi",      "#E0115F", "#FF4D8B", "#E0115F", "#FF4D8B", "#FFE5EE", "#C98AA5", "#0A0005", "#1A0A10", "#FF4D8B")
+SZK.Themes.Naranja   = BuildTheme("Naranja",   "#FF8C00", "#FFB347", "#FF8C00", "#FFB347", "#FFF3E0", "#C9A08A", "#0A0500", "#1A0F0A", "#FFB347")
 
-SZK.ThemeOrder = {"SZKHUB", "Rubi", "Sovereign"}
+SZK.ThemeOrder = {"SZKHUB", "Rojo", "Dorado", "Esmeralda", "Diamante", "Zafiro", "Amatista", "Rubi", "Naranja"}
 
 local MainGui = Instance.new("ScreenGui")
 MainGui.Name = "SZKLibrary"
@@ -287,10 +294,7 @@ function SZK:Notify(config)
 		badge.Parent = frame
 		Round(16, badge)
 		icon = Img(badge, iconKey, UDim2.fromOffset(16, 16), accent, 0, 4)
-		if icon then
-			icon.AnchorPoint = Vector2.new(0.5, 0.5)
-			icon.Position = UDim2.new(0.5, 0, 0.5, 0)
-		end
+		if icon then icon.AnchorPoint = Vector2.new(0.5, 0.5); icon.Position = UDim2.new(0.5, 0, 0.5, 0) end
 	end
 
 	local tLbl = Instance.new("TextLabel")
@@ -444,7 +448,6 @@ function SZK:CreateWindow(config)
 	Round(6, MainFrame)
 	local MainStroke = Outline(MainFrame, Theme.Outline, 1, 0.35)
 
-	-- Pulso suave del stroke
 	task.spawn(function()
 		while MainFrame and MainFrame.Parent do
 			TweenService:Create(MainStroke, TweenInfo.new(1.4), {Transparency = 0.7}):Play()
@@ -489,7 +492,6 @@ function SZK:CreateWindow(config)
 	Overlay.ZIndex = 1
 	Overlay.Parent = MainFrame
 
-	-- HEADER (estilo SZKHUB: 58px, título Garamond, subtítulo)
 	local HeaderBar = Instance.new("Frame")
 	HeaderBar.Size = UDim2.new(1, 0, 0, 58)
 	HeaderBar.BackgroundColor3 = Theme.Background
@@ -523,7 +525,6 @@ function SZK:CreateWindow(config)
 	DescLabel.ZIndex = 4
 	DescLabel.Parent = HeaderBar
 
-	-- Controls a la derecha (theme, minimizar, cerrar)
 	local Controls = Instance.new("Frame")
 	local ctrlW = showThemeSelector and 140 or 72
 	Controls.Size = UDim2.fromOffset(ctrlW, 28)
@@ -605,10 +606,9 @@ function SZK:CreateWindow(config)
 	CloseBtn.MouseEnter:Connect(function() closeHover(true) end)
 	CloseBtn.MouseLeave:Connect(function() closeHover(false) end)
 
-	-- Línea central + diamante (estilo SZKHUB)
-	local function MakeDividerLine(parent, size, pos)
+	local function MakeDividerLine(parent, size_, pos)
 		local l = Instance.new("Frame")
-		l.Size = size
+		l.Size = size_
 		l.Position = pos
 		l.BackgroundColor3 = Theme.Accent
 		l.BorderSizePixel = 0
@@ -635,7 +635,6 @@ function SZK:CreateWindow(config)
 	HeaderDiamond.ZIndex = 4
 	HeaderDiamond.Parent = MainFrame
 
-	-- SIDEBAR
 	local SIDE_W, TOP_H, FOOT_H, SIDE_PAD_TOP = 168, 62, 12, 8
 
 	local SideBg = Instance.new("Frame")
@@ -667,7 +666,6 @@ function SZK:CreateWindow(config)
 	SidePad.PaddingBottom = UDim.new(0, 8)
 	SidePad.Parent = Sidebar
 
-	-- Divider vertical
 	local VLine = Instance.new("Frame")
 	VLine.Size = UDim2.new(0, 1, 1, -(TOP_H + FOOT_H + 16))
 	VLine.Position = UDim2.new(0, SIDE_W, 0, TOP_H + 8)
@@ -684,7 +682,6 @@ function SZK:CreateWindow(config)
 	})
 	VLineGrad.Parent = VLine
 
-	-- Contenido
 	local PageHost = Instance.new("Frame")
 	PageHost.Position = UDim2.new(0, SIDE_W + 1, 0, TOP_H)
 	PageHost.Size = UDim2.new(1, -(SIDE_W + 1), 1, -(TOP_H + FOOT_H))
@@ -695,7 +692,6 @@ function SZK:CreateWindow(config)
 	PageHost.ZIndex = 1
 	PageHost.Parent = MainFrame
 
-	-- Theme popup
 	local ThemePopup = Instance.new("Frame")
 	ThemePopup.Size = UDim2.fromOffset(180, 280)
 	ThemePopup.BackgroundColor3 = Theme.ElementBackground
@@ -719,7 +715,6 @@ function SZK:CreateWindow(config)
 	ThemeList.Padding = UDim.new(0, 4)
 	ThemeList.Parent = ThemeScroll
 
-	-- BOTÓN DE ABRIR (blanco estilo SZKHUB)
 	local FloatBtn = Instance.new("TextButton")
 	FloatBtn.Name = "MainButton"
 	FloatBtn.AnchorPoint = Vector2.new(0.5, 0)
@@ -756,7 +751,6 @@ function SZK:CreateWindow(config)
 		isAnimating = true
 		FloatBtn.Visible = false
 		MainFrame.Visible = true
-		local vp = GetViewport()
 		local targetScale = WindowScale.Scale
 		WindowScale.Scale = targetScale * 0.94
 		MainFrame.Size = UDim2.fromOffset(size.X, size.Y)
@@ -831,7 +825,6 @@ function SZK:CreateWindow(config)
 	EnableDrag(HeaderBar, MainFrame)
 	EnableDrag(FloatBtn, FloatBtn)
 
-	-- RESIZE GRIP (3 líneas anguladas como SZKHUB)
 	local GRIP_ANGLE = -20
 	local MIN_W, MIN_H, MAX_W, MAX_H = 480, 320, 1000, 700
 
@@ -906,7 +899,6 @@ function SZK:CreateWindow(config)
 		end
 	end))
 
-	-- ACTUALIZAR TEMA
 	local function UpdateTheme(name, animate)
 		local T = SZK.Themes[name] or SZK.Themes.SZKHUB
 		SZK.CurrentTheme = T
@@ -995,7 +987,6 @@ function SZK:CreateWindow(config)
 		end
 	end
 
-	-- Selector de temas
 	if showThemeSelector then
 		for _, tName in ipairs(SZK.ThemeOrder) do
 			if SZK.Themes[tName] then
@@ -1174,7 +1165,6 @@ function SZK:CreateWindow(config)
 		pagePad.PaddingRight = UDim.new(0, 18)
 		pagePad.Parent = page
 
-		-- TAB BUTTON
 		local tabBtn = Instance.new("TextButton")
 		tabBtn.Size = UDim2.new(1, -16, 0, 28)
 		tabBtn.BackgroundColor3 = Theme.Accent
@@ -1184,7 +1174,6 @@ function SZK:CreateWindow(config)
 		tabBtn.ZIndex = 6
 		tabBtn.Parent = Sidebar
 
-		-- Decoración (glow + lines + diamond) visible solo cuando está activo
 		local deco = Instance.new("Frame")
 		deco.Size = UDim2.fromScale(1, 1)
 		deco.BackgroundTransparency = 1
@@ -1247,7 +1236,6 @@ function SZK:CreateWindow(config)
 		diamond.ZIndex = 3
 		diamond.Parent = deco
 
-		-- Contenido del tab (row: icono + texto)
 		local tabRow = Instance.new("Frame")
 		tabRow.Size = UDim2.fromScale(1, 1)
 		tabRow.BackgroundTransparency = 1
@@ -1379,7 +1367,6 @@ function SZK:CreateWindow(config)
 			local sectionIcon = cfg and AttachIcon(header, cfg, hLabel)
 			table.insert(Registered, {Type="Section", Label=hLabel, Icon=sectionIcon})
 
-			-- Línea debajo del título
 			local hLine = Instance.new("Frame")
 			hLine.Size = UDim2.new(1, 0, 0, 1)
 			hLine.Position = UDim2.new(0, 0, 1, -2)
