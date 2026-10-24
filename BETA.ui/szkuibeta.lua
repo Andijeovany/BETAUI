@@ -1802,6 +1802,12 @@ function SZK:CreateWindow(config)
 				Round(4, list)
 				Outline(list, Theme.Outline, 1, 0.15)
 
+				-- 🔥 FIX: UIListLayout faltante que causaba que las opciones se superpusieran
+				local listLayout = Instance.new("UIListLayout")
+				listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				listLayout.Padding = UDim.new(0, 2)
+				listLayout.Parent = list
+
 				local function getMulti()
 					local a = {}
 					for _, o in ipairs(options) do
